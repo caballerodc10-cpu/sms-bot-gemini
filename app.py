@@ -1,16 +1,18 @@
 from flask import Flask, request
 from twilio.twiml.messaging_response import MessagingResponse
-import google.generativeai as genai
+from google import genai
 import os
 
 app = Flask(__name__)
 
-genai.configure(api_key=os.environ.get("GEMINI_API_KEY"))
-model = genai.GenerativeModel("gemini-1.5-flash-latest")
+client = genai.Client(api_key=os.environ.get("GEMINI_API_KEY"))
 
 def get_gemini_reply(incoming_msg):
     try:
-        response = model.generate_content(incoming_msg)
+        response = client.models.generate_content(
+            model="gemini-2.0-flash",
+            contents=incoming_msg
+        )
         return response.text
     except Exception as e:
         return "Error: " + str(e)
