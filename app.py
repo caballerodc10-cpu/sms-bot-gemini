@@ -10,20 +10,21 @@ model = genai.GenerativeModel("gemini-1.5-flash")
 
 @app.route("/sms", methods=["POST"])
 def sms_reply():
-      incoming_msg = request.form.get("Body", "")
-      try:
-                response = model.generate_content(incoming_msg)
-                reply_text = response.text
-except Exception as e:
-        reply_text = "Error al procesar tu mensaje: " + str(e)
+    incoming_msg = request.form.get("Body", "")
+    reply_text = ""
+    try:
+        response = model.generate_content(incoming_msg)
+        reply_text = response.text
+    except Exception as e:
+        reply_text = "Error: " + str(e)
     resp = MessagingResponse()
     resp.message(reply_text)
     return str(resp)
 
 @app.route("/", methods=["GET"])
 def health():
-      return "Bot SMS activo!", 200
+    return "Bot SMS activo!", 200
 
 if __name__ == "__main__":
-      port = int(os.environ.get("PORT", 5000))
-      app.run(host="0.0.0.0", port=port)
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host="0.0.0.0", port=port)
